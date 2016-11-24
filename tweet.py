@@ -1,6 +1,7 @@
 import schedule
 import time
 import os
+import shelve
 import twitter as tw
 import boto.dynamodb
 import logging
@@ -23,10 +24,10 @@ def initialize():
 
 def send_tweet(s):
     cred = {
-        "consumer_key": os.environ['NEWTON_CONSUMER_KEY'],
-        "consumer_secret": os.environ['NEWTON_CONSUMER_SECRET'],
-        "token": os.environ['NEWTON_TOKEN'],
-        "token_secret": os.environ['NEWTON_TOKEN_SECRET'],
+        "consumer_key": os.environ['MACHEN_CONSUMER_KEY'],
+        "consumer_secret": os.environ['MACHEN_CONSUMER_SECRET'],
+        "token": os.environ['MACHEN_TOKEN'],
+        "token_secret": os.environ['MACHEN_TOKEN_SECRET'],
     }
     auth = tw.OAuth(**cred)
     t = tw.Twitter(auth=auth)
@@ -51,7 +52,7 @@ if __name__ == '__main__':
         initialize()
 
     tweet()
-    schedule.every(656).minutes.do(tweet)
+    schedule.every(1256).minutes.do(tweet)
 
     while True:
         try:
