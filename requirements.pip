@@ -1,3 +1,2 @@
 twitter==1.17.1
-schedule==0.3.2
-boto
+nodb

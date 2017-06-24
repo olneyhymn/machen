@@ -1,11 +1,9 @@
-import schedule
-import time
 import os
-import shelve
 import twitter as tw
-import boto.dynamodb
 import logging
+import time
 
+from nodb import NoDB
 from random import shuffle
 
 tweet_content = "tweet-content.txt"
@@ -13,50 +11,66 @@ tweet_lookup = "tweet-lookup.shelve"
 logging.basicConfig(filename='tweet.log', level=logging.WARNING)
 
 
-def initialize():
-    tweets = shelve.open(tweet_lookup)
+def get_raw_tweets():
+    tweets = []
     with open(tweet_content, 'r') as f:
         raw_tweets = f.readlines()
         for tweet in raw_tweets:
-            tweets[tweet.strip()] = 0
-    tweets.close()
+            tweets.append(tweet.strip())
+    return tweets
 
 
 def send_tweet(s):
     cred = {
-        "consumer_key": os.environ['MACHEN_CONSUMER_KEY'],
-        "consumer_secret": os.environ['MACHEN_CONSUMER_SECRET'],
-        "token": os.environ['MACHEN_TOKEN'],
-        "token_secret": os.environ['MACHEN_TOKEN_SECRET'],
+        "consumer_key": os.environ['MACHEN_CONSUMER_KEY'].strip(),
+        "consumer_secret": os.environ['MACHEN_CONSUMER_SECRET'].strip(),
+        "token": os.environ['MACHEN_TOKEN'].strip(),
+        "token_secret": os.environ['MACHEN_TOKEN_SECRET'].strip(),
     }
     auth = tw.OAuth(**cred)
     t = tw.Twitter(auth=auth)
     t.statuses.update(status=s)
     print("Sent tweet: {}".format(s))
 
+    db = get_db()
+    db.save({"content": s,
+             "last_sent": int(time.time()),
+             "from": "machen"})
 
-def tweet():
-    lookup = shelve.open(tweet_lookup)
-    tweets = list(lookup.keys())
-    tweets = sorted(tweets, key=lambda tweet: lookup[tweet])
+
+def get_db(bucket="olneyhymnbots",
+           serializer="json",
+           index="content"):
+    db = NoDB()
+    db.bucket = bucket
+    db.human_readable_indexes
+    db.serializer = serializer
+    db.index = index
+    return db
+
+
+def tweets_ordered_by_last_sent_time():
+    db = get_db()
+    last_sent = {}
+    for tweet in get_raw_tweets():
+        d = db.load(tweet)
+        if d is None:
+            last_sent[tweet] = 0
+        else:
+            last_sent[tweet] = d['last_sent']
+    s = sorted([(time, tweet)
+                for tweet, time in last_sent.items()])
+    return [t for _, t in s]
+
+
+def tweet(a, b):
+    tweets = tweets_ordered_by_last_sent_time()
     tweets = tweets[0:10]
     shuffle(tweets)
     tweet = tweets[0]
-    lookup[tweet] += 1
+    tweet = tweet.replace(" / ", "\n")
     send_tweet(tweet)
-    lookup.close()
 
 
 if __name__ == '__main__':
-    if not os.path.isfile(tweet_lookup + ".db"):
-        initialize()
-
     tweet()
-    schedule.every(1256).minutes.do(tweet)
-
-    while True:
-        try:
-            schedule.run_pending()
-        except Exception as e:
-            logging.error(e)
-        time.sleep(60)
