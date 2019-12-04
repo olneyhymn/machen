@@ -1,0 +1,34 @@
+
+service: machen
+
+provider:
+  name: aws
+  runtime: python3.8
+
+# you can overwrite defaults here
+  stage: prod
+  region: us-east-1
+
+  environment:
+    CONSUMER_KEY: ${ssm:machen_consumer_key}
+    CONSUMER_SECRET: ${ssm:machen_consumer_secret}
+    TOKEN: ${ssm:machen_token}
+    TOKEN_SECRET: ${ssm:machen_token_secret}
+
+# you can add packaging information here
+#package:
+#  include:
+#    - include-me.py
+#    - include-me-dir/**
+#  exclude:
+#    - exclude-me.py
+#    - exclude-me-dir/**
+
+functions:
+  hello:
+    handler: tweet.tweet
+
+    events:
+      - schedule: rate(963 minutes)
+
+
