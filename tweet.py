@@ -22,10 +22,10 @@ def get_raw_tweets():
 
 def send_tweet(s):
     cred = {
-        "consumer_key": os.environ['MACHEN_CONSUMER_KEY'].strip(),
-        "consumer_secret": os.environ['MACHEN_CONSUMER_SECRET'].strip(),
-        "token": os.environ['MACHEN_TOKEN'].strip(),
-        "token_secret": os.environ['MACHEN_TOKEN_SECRET'].strip(),
+        "consumer_key": os.environ['CONSUMER_KEY'].strip(),
+        "consumer_secret": os.environ['CONSUMER_SECRET'].strip(),
+        "token": os.environ['TOKEN'].strip(),
+        "token_secret": os.environ['TOKEN_SECRET'].strip(),
     }
     auth = tw.OAuth(**cred)
     t = tw.Twitter(auth=auth)
