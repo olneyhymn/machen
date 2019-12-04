@@ -13,7 +13,7 @@ logging.basicConfig(filename="tweet.log", level=logging.WARNING)
 
 def get_raw_tweets():
     tweets = []
-    with open(tweet_content, "r") as f:
+    with open(tweet_content, "r", encoding="utf-8") as f:
         raw_tweets = f.readlines()
         for tweet in raw_tweets:
             tweets.append(tweet.strip())
