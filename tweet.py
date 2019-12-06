@@ -20,7 +20,7 @@ def get_raw_tweets():
     return tweets
 
 
-def send_tweet(s):
+def send_tweet(s, db):
     cred = {
         "consumer_key": os.environ["CONSUMER_KEY"].strip(),
         "consumer_secret": os.environ["CONSUMER_SECRET"].strip(),
@@ -32,7 +32,6 @@ def send_tweet(s):
     t.statuses.update(status=s)
     print("Sent tweet: {}".format(s))
 
-    db = get_db()
     db.save({"content": s, "last_sent": int(time.time()), "from": "machen"})
 
 
@@ -45,8 +44,7 @@ def get_db(bucket="olneyhymnbots", serializer="json", index="content"):
     return db
 
 
-def tweets_ordered_by_last_sent_time():
-    db = get_db()
+def tweets_ordered_by_last_sent_time(db):
     last_sent = {}
     for tweet in get_raw_tweets():
         d = db.load(tweet)
@@ -59,12 +57,13 @@ def tweets_ordered_by_last_sent_time():
 
 
 def tweet(a, b):
-    tweets = tweets_ordered_by_last_sent_time()
+    db = get_db()
+    tweets = tweets_ordered_by_last_sent_time(db)
     tweets = tweets[0:10]
     shuffle(tweets)
     tweet = tweets[0]
     tweet = tweet.replace(" / ", "\n")
-    send_tweet(tweet)
+    send_tweet(tweet, db)
 
 
 if __name__ == "__main__":
