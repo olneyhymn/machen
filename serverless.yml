@@ -21,15 +21,6 @@ provider:
     TOKEN: ${ssm:machen_token_key}
     TOKEN_SECRET: ${ssm:machen_token_secret}
 
-# you can add packaging information here
-#package:
-#  include:
-#    - include-me.py
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.py
-#    - exclude-me-dir/**
-
 functions:
   hello:
     handler: tweet.tweet
