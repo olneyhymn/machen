@@ -4,6 +4,7 @@ service: machen
 provider:
   name: aws
   runtime: python3.8
+  timeout: 15
   iamRoleStatements:
     - Effect: Allow
       Action:
