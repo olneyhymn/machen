@@ -38,7 +38,7 @@ def send_tweet(s, db):
 def get_db(bucket="olneyhymnbots", serializer="json", index="content"):
     db = NoDB()
     db.bucket = bucket
-    db.human_readable_indexes
+    db.human_readable_indexes = True
     db.serializer = serializer
     db.index = index
     return db

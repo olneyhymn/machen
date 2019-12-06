@@ -4,6 +4,12 @@ service: machen
 provider:
   name: aws
   runtime: python3.8
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource: "arn:aws:s3:::olneyhymnbots/*"
 
 # you can overwrite defaults here
   stage: prod
