@@ -12,7 +12,7 @@ provider:
   environment:
     CONSUMER_KEY: ${ssm:machen_consumer_key}
     CONSUMER_SECRET: ${ssm:machen_consumer_secret}
-    TOKEN: ${ssm:machen_token}
+    TOKEN: ${ssm:machen_token_key}
     TOKEN_SECRET: ${ssm:machen_token_secret}
 
 # you can add packaging information here
