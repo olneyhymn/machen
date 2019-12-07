@@ -27,6 +27,6 @@ functions:
     handler: tweet.tweet
 
     events:
-      - schedule: rate(963 minutes)
+      - schedule: rate(863 minutes)
 
 
