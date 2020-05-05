@@ -2,7 +2,7 @@ all: deploy
 
 .PHONY: deploy
 deploy:
-	STATIC_DEPS=true pip3 install -U twitter NoDB -t .
+	STATIC_DEPS=true pip3 install -U twitter git+https://github.com/Miserlou/NoDB.git@78b4337 -t .
 	rm -rf concurrent/futures
 	serverless deploy
 
